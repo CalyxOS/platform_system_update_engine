@@ -326,6 +326,7 @@ cc_binary {
 
     static_libs: ["libupdate_engine_android"],
     required: [
+        "cacerts",
         "cacerts_google",
         "otacerts",
     ],
