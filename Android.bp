@@ -293,7 +293,10 @@ cc_binary {
     ],
 
     static_libs: ["libupdate_engine_android"],
-    required: ["cacerts_google"],
+    required: [
+         "cacerts",
+         "cacerts_google",
+    ],
 
     srcs: ["main.cc"],
     init_rc: ["update_engine.rc"],
