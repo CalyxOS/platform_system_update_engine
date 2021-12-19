@@ -99,6 +99,12 @@ DynamicPartitionControlAndroid::~DynamicPartitionControlAndroid() {
   Cleanup();
 }
 
+constexpr char kIsDDR5[] = "ro.boot.ddr_type";
+// Check if device is LPDDR4X or LPDDR5
+bool DynamicPartitionControlAndroid::IsDDR5() {
+  return GetBoolProperty(kIsDDR5, false);
+}
+
 static FeatureFlag GetFeatureFlag(const char* enable_prop,
                                   const char* retrofit_prop) {
   // Default retrofit to false if retrofit_prop is empty.
@@ -1149,10 +1155,31 @@ DynamicPartitionControlAndroid::GetPartitionDevice(
   }
   // Try static partitions.
   auto static_path = GetStaticDevicePath(device_dir, partition_name_suffix);
+
+  // Mimic the functionality of the Oneplus update_engine to handle
+  // cases when the OTA payload contain xbl and xbl_config images for both LPDR4X and LPDDR5
+  // only current known cases are Oneplus 8T and Oneplus 9R
+  // these payloads contain two extra LPDDR5 specifc images xbl_lp5 and xbl_config_lp5
+  if (partition_name == "xbl_lp5" || partition_name == "xbl_config_lp5") {
+      // Set target of xbl_lp5 image to regular xbl partitions if device have LPDDR5
+      if (DynamicPartitionControlAndroid::IsDDR5()) {
+        std::string lp5 ="_lp5";
+        std::string::size_type i = partition_name.find(lp5);
+        std::string target_partition_name = partition_name;
+        if (i != std::string::npos) {
+            target_partition_name.erase(i,lp5.length());
+        }
+        const auto& partition_new_name_suffix = target_partition_name + SlotSuffixForSlotNumber(slot);
+        static_path = GetStaticDevicePath(device_dir, partition_name_suffix.append(partition_new_name_suffix));
+      } else {
+        // Set target for xbl_lp5 images to /dev/null if device have LPDDR4X ram
+        static_path = base::FilePath("/dev/null");
+      }
+  }
+
   if (!DeviceExists(static_path)) {
     LOG(ERROR) << "Device file " << static_path << " does not exist.";
     return {};
-  }
 
   return {{.rw_device_path = static_path,
            .readonly_device_path = static_path,
