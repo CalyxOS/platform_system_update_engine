@@ -28,6 +28,7 @@
 #include <string>
 #include <utility>
 
+#include <android-base/properties.h>
 #include <base/bind.h>
 #include <base/strings/string_util.h>
 #include <brillo/data_encoding.h>
@@ -42,6 +43,8 @@
 
 using brillo::data_encoding::Base64Encode;
 using std::string;
+using android::base::GetBoolProperty;
+
 
 // On a partition with verity enabled, we expect to see the following format:
 // ===================================================
@@ -76,6 +79,14 @@ using std::string;
 
 namespace chromeos_update_engine {
 
+constexpr char kIsDDR5[] = "ro.boot.ddr_type";
+// Used to check the device ram type is LPDDRX4 or LPDDR5
+// by reading the value of ro.boot.ddr_type
+// will default to false if prop is missing
+bool FilesystemVerifierAction::IsDDR5() {
+  return GetBoolProperty(kIsDDR5, false);
+}
+
 namespace {
 const off_t kReadFileBufferSize = 128 * 1024;
 constexpr float kVerityProgressPercent = 0.6;
@@ -98,6 +109,18 @@ void FilesystemVerifierAction::PerformAction() {
     abort_action_completer.set_code(ErrorCode::kSuccess);
     return;
   }
+
+  // Mimic the functionality of the Oneplus update_engine to handle
+  // cases when the OTA payload contain xbl and xbl_config images for both
+  // LPDR4X and LPDDR5 only current known cases are Oneplus 8T and Oneplus 9R
+  // these payloads contain two extra LPDDR5 specifc images xbl_lp5 and xbl_config_lp5
+  for (size_t partitionIndex = 0; partitionIndex < install_plan_.partitions.size(); partitionIndex++) {
+    if (install_plan_.partitions[partitionIndex].name == "xbl_lp5" || install_plan_.partitions[partitionIndex].name == "xbl_lp5_config") {
+        xbllp5PartitionsExist = true;
+        break;
+    }
+  }
+
   install_plan_.Dump();
   StartPartitionHashing();
   abort_action_completer.set_should_complete(false);
@@ -177,6 +200,47 @@ bool FilesystemVerifierAction::InitializeFdVABC(bool should_write_verity) {
     LOG(ERROR) << "OpenCowReader(" << partition.name << ", "
                << partition.source_path << ") failed.";
     return false;
+
+  LOG(INFO) << "Hashing partition " << partition_index_ << " ("
+            << partition.name << ") on device " << part_path;
+  
+  // Mimic the functionality of the Oneplus update_engine to handle
+  // cases when the OTA payload contain xbl and xbl_config images for both
+  // LPDDR4X and LPDDR5 devices only current known cases are Oneplus 8T and Oneplus 9R
+  // the seperate LPDDR5 images are named xbl_lp5 and xbl_config_lp5
+  if (xbllp5PartitionsExist == true) {
+    // Skip hash check for regular xbl and xbl_config partitions if 
+    // The devices have LPDDR5 ram and LPDDR5 specfic partions are included in the payload
+      if (FilesystemVerifierAction::IsDDR5() &&
+          (partition.name == "xbl_config" || partition.name == "xbl")) {
+            LOG(INFO) << "Skip hash verification " << partition_index_ << " for ("
+                    << partition.name << ") because current system is LPDDR5 and LPDDR5 specific xbl_lp5 images exists in payload";
+          partition_index_++;
+          StartPartitionHashing();
+          return;
+        }
+      //Skip hash checking on LPDDR5 specific images if they are included in the payload and current device have LPDDR4X ram
+      else if (!FilesystemVerifierAction::IsDDR5() &&
+          (partition.name == "xbl_config_lp5" || partition.name == "xbl_lp5"))
+      {
+        LOG(INFO) << "Skip hash verification " << partition_index_ << " for ("
+                  << partition.name << ") because current system is non LPDDR5";
+        partition_index_++;
+        StartPartitionHashing();
+        return;
+      }
+  }  
+  brillo::ErrorPtr error;
+  src_stream_ =
+      brillo::FileStream::Open(base::FilePath(part_path),
+                               brillo::Stream::AccessMode::READ,
+                               brillo::FileStream::Disposition::OPEN_EXISTING,
+                               &error);
+
+  if (!src_stream_) {
+    LOG(ERROR) << "Unable to open " << part_path << " for reading";
+    Cleanup(ErrorCode::kFilesystemVerifierError);
+    return;
   }
   partition_size_ = partition.target_size;
   return true;
