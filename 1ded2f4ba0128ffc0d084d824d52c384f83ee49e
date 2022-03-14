@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "96759751_31e98a06",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2022-03-14T12:04:05Z",
+      "side": 1,
+      "message": "https://gerrit.twrp.me/c/android_system_update_engine/+/4966",
+      "revId": "1ded2f4ba0128ffc0d084d824d52c384f83ee49e",
+      "serverId": "35266860-6252-469c-a67d-185064479fc0"
+    }
+  ]
+}
