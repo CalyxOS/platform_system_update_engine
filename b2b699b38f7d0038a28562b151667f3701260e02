@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f31bf03c_2eeb4342",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000065
+      },
+      "writtenOn": "2023-02-17T12:00:43Z",
+      "side": 1,
+      "message": "Fixes OTA streaming from our waffles server with new SystemUpdater",
+      "revId": "b2b699b38f7d0038a28562b151667f3701260e02",
+      "serverId": "35266860-6252-469c-a67d-185064479fc0"
+    }
+  ]
+}
