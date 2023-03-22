@@ -50,6 +50,24 @@
       "message": "Merge?",
       "revId": "b2b699b38f7d0038a28562b151667f3701260e02",
       "serverId": "35266860-6252-469c-a67d-185064479fc0"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "29f994ba_9bb23e2f",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2023-03-22T17:04:35Z",
+      "side": 1,
+      "message": "Given that this touches OTA code, even though it should be fine now given we don\u0027t stream, I\u0027d still like to double check before shipping. It can wait until new Updater is ready to go",
+      "parentUuid": "46e01ea2_d276cf34",
+      "revId": "b2b699b38f7d0038a28562b151667f3701260e02",
+      "serverId": "35266860-6252-469c-a67d-185064479fc0"
     }
   ]
 }
