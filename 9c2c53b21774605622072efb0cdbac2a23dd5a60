@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "27e50cd3_77810fdc",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 7
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2024-02-07T23:06:17Z",
+      "side": 1,
+      "message": "https://android-review.googlesource.com/q/topic:%22cleanup_cacerts_google%22",
+      "revId": "9c2c53b21774605622072efb0cdbac2a23dd5a60",
+      "serverId": "35266860-6252-469c-a67d-185064479fc0"
+    }
+  ]
+}
