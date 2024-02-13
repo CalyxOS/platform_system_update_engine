@@ -34,6 +34,24 @@
       "parentUuid": "27e50cd3_77810fdc",
       "revId": "9c2c53b21774605622072efb0cdbac2a23dd5a60",
       "serverId": "35266860-6252-469c-a67d-185064479fc0"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "85dbc31a_85c8ef65",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 7
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2024-02-13T16:20:26Z",
+      "side": 1,
+      "message": "We can just let that be, and it\u0027ll get updated when Google does puts it in a release branch.",
+      "parentUuid": "2761c5ba_93b69d02",
+      "revId": "9c2c53b21774605622072efb0cdbac2a23dd5a60",
+      "serverId": "35266860-6252-469c-a67d-185064479fc0"
     }
   ],
   "submitRequirementResults": [
