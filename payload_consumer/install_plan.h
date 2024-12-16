@@ -182,6 +182,9 @@ struct InstallPlan {
   // False otherwise.
   bool run_post_install{true};
 
+  // True if this update is a rollback.
+  bool is_rollback{false};
+
   // True if this rollback should preserve some system data.
   bool rollback_data_save_requested{false};
 

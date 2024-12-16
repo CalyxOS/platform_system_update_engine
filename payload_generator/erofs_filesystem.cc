@@ -175,12 +175,12 @@ std::unique_ptr<ErofsFilesystem> ErofsFilesystem::CreateFromFile(
   }
   struct erofs_sb_info sbi {};
 
-  if (const auto err = erofs_dev_open(&sbi, filename.c_str(), O_RDONLY); err) {
+  if (const auto err = dev_open_ro(&sbi, filename.c_str()); err) {
     PLOG(INFO) << "Failed to open " << filename;
     return nullptr;
   }
   DEFER {
-    erofs_dev_close(&sbi);
+    dev_close(&sbi);
   };
 
   if (const auto err = erofs_read_superblock(&sbi); err) {
@@ -189,7 +189,7 @@ std::unique_ptr<ErofsFilesystem> ErofsFilesystem::CreateFromFile(
   }
   const auto block_size = 1UL << sbi.blkszbits;
   struct stat st {};
-  if (const auto err = stat(filename.c_str(), &st); err) {
+  if (const auto err = fstat(sbi.devfd, &st); err) {
     PLOG(ERROR) << "Failed to stat() " << filename;
     return nullptr;
   }
