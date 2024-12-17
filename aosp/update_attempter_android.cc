@@ -150,9 +150,9 @@ string GetPayloadId(const std::map<string, string>& headers) {
 }
 
 std::string GetCurrentBuildVersion() {
-  // Example: [ro.build.fingerprint]:
-  // [generic/aosp_cf_x86_64_phone/vsoc_x86_64:VanillaIceCream/AOSP.MAIN/user08011303:userdebug/test-keys]
-  return android::base::GetProperty("ro.build.fingerprint", "");
+  // Example: [ro.build.version.incremental]:
+  // 24602014
+  return android::base::GetProperty("ro.build.version.incremental", "");
 }
 
 }  // namespace
