@@ -540,7 +540,7 @@ void CleanupPreviousUpdateAction::ReportMergeStats() {
   bool iouring_used = report.iouring_used();
 
   auto target_build_fingerprint =
-      android::base::GetProperty("ro.build.fingerprint", "");
+      android::base::GetProperty("ro.build.version.incremental", "");
 
   LOG(INFO) << "Reporting merge stats: "
             << android::snapshot::UpdateState_Name(report.state()) << " in "

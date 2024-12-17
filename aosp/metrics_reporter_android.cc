@@ -141,7 +141,7 @@ void MetricsReporterAndroid::ReportUpdateAttemptMetrics(
       payload_size_mib,
       GetStatsdEnumValue(static_cast<int32_t>(attempt_result)),
       GetStatsdEnumValue(static_cast<int32_t>(error_code)),
-      android::base::GetProperty("ro.build.fingerprint", "").c_str(),
+      android::base::GetProperty("ro.build.version.incremental", "").c_str(),
       super_partition_size_bytes,
       slot_size_bytes,
       super_free_space,
